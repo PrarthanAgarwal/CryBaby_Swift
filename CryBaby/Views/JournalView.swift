@@ -51,7 +51,9 @@ struct JournalView: View {
                     }) {
                         HStack {
                             Image(systemName: "list.bullet")
+                                .foregroundColor(AppTheme.Colors.tertiary)
                             Text("View All Sessions")
+                                .foregroundColor(AppTheme.Colors.tertiary)
                             Spacer()
                             Text("\(sessions.count)")
                                 .foregroundColor(AppTheme.Colors.textSecondary)
@@ -93,6 +95,7 @@ struct JournalView: View {
                             Button("Done") {
                                 showingAllSessions = false
                             }
+                            .foregroundColor(AppTheme.Colors.tertiary)
                         }
                     }
                 }
@@ -185,10 +188,10 @@ struct CalendarView: View {
                         let dayId = calendar.startOfDay(for: date).timeIntervalSince1970
                         
                         Circle()
-                            .fill(isMarked ? AppTheme.Colors.primary.opacity(0.2) : Color.clear)
+                            .fill(isMarked ? AppTheme.Colors.tertiary.opacity(0.2) : Color.clear)
                             .overlay(
                                 Text("\(calendar.component(.day, from: date))")
-                                    .foregroundColor(isMarked ? AppTheme.Colors.primary : AppTheme.Colors.text)
+                                    .foregroundColor(isMarked ? AppTheme.Colors.tertiary : AppTheme.Colors.text)
                             )
                             .id(dayId)
                             .onTapGesture {

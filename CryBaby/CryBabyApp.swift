@@ -50,7 +50,7 @@ struct CryBabyApp: App {
                         Label("Achievements", systemImage: "trophy.fill")
                     }
             }
-            .tint(AppTheme.Colors.primary)
+            .tint(AppTheme.Colors.tertiary)
             .background(AppTheme.Colors.background)
         }
         .modelContainer(container)

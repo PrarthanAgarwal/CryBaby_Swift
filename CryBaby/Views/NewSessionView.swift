@@ -91,15 +91,20 @@ struct NewSessionView: View {
         NavigationView {
             Form {
                 Section(header: Text("Session Name").font(.headline).fontWeight(.bold)) {
-                    TextField("Give your cry a memorable name...", text: $name)
-                        .focused($focusedField, equals: .name)
-                        .textFieldStyle(.plain)
-                        .padding(10)
-                        .background(AppTheme.Colors.secondary)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 8)
-                                .stroke(Color.black, lineWidth: 1)
-                        )
+                    VStack(spacing: 0) {
+                        TextField("Give your cry a memorable name...", text: $name)
+                            .focused($focusedField, equals: .name)
+                            .textFieldStyle(.plain)
+                            .frame(maxWidth: .infinity)
+                            .padding(10)
+                            .background(AppTheme.Colors.secondary)
+                            .cornerRadius(8)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .stroke(Color.black, lineWidth: 1)
+                            )
+                    }
+                    .fixedSize(horizontal: false, vertical: true)
                 }
                 .listRowBackground(Color.clear)
                 
@@ -121,20 +126,23 @@ struct NewSessionView: View {
                                             }
                                         }
                                         .id(reason)
+                                        .frame(minWidth: 0, maxWidth: .infinity)
                                     }
                                 }
                                 .padding(.horizontal, 4)
                                 .tag(pageIndex)
+                                .frame(minHeight: 0, maxHeight: .infinity)
                             }
                         }
                         .frame(height: 170)
+                        .clipped()
                         .tabViewStyle(.page(indexDisplayMode: .never))
                         
                         // Custom page indicator
                         HStack(spacing: 8) {
                             ForEach(0..<numberOfReasonPages, id: \.self) { index in
                                 Circle()
-                                    .fill(currentPage == index ? AppTheme.Colors.primary : AppTheme.Colors.textSecondary.opacity(0.7))
+                                    .fill(currentPage == index ? AppTheme.Colors.tertiary : AppTheme.Colors.textSecondary.opacity(0.7))
                                     .frame(width: 8, height: 8)
                             }
                         }
@@ -158,13 +166,15 @@ struct NewSessionView: View {
                                         }
                                     }
                                     .id(volume)
+                                    .frame(width: 80, height: 80)
                                 }
                             }
                             .padding(.horizontal, 4)
                             .padding(.vertical, 8)
+                            .frame(minHeight: 96)
                         }
+                        .clipped()
                         .onAppear {
-                            // Ensure content is properly laid out
                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                                 withAnimation {
                                     proxy.scrollTo(selectedVolume, anchor: .center)
@@ -178,7 +188,7 @@ struct NewSessionView: View {
                 Section(header: Text("Time Details").font(.headline).fontWeight(.bold)) {
                     VStack {
                         DatePicker("Date", selection: $date, in: dateRange)
-                            .tint(AppTheme.Colors.primary)
+                            .tint(AppTheme.Colors.tertiary)
                         Divider()
                         Button {
                             showingDurationPicker.toggle()
@@ -189,7 +199,7 @@ struct NewSessionView: View {
                                 Text(formattedDuration)
                                     .foregroundColor(AppTheme.Colors.textSecondary)
                                 Image(systemName: "clock.fill")
-                                    .foregroundColor(AppTheme.Colors.primary)
+                                    .foregroundColor(AppTheme.Colors.tertiary)
                             }
                             .contentShape(Rectangle())
                         }
@@ -264,7 +274,7 @@ struct NewSessionView: View {
                             Spacer()
                         }
                         .padding()
-                        .background(name.isEmpty || satisfaction == 0 ? AppTheme.Colors.textSecondary : AppTheme.Colors.primary)
+                        .background(name.isEmpty || satisfaction == 0 ? AppTheme.Colors.textSecondary : AppTheme.Colors.tertiary)
                         .cornerRadius(12)
                     }
                     .buttonStyle(ScaleButtonStyle())
@@ -292,8 +302,12 @@ struct NewSessionView: View {
             }
             .toolbar {
                 ToolbarItem(placement: .keyboard) {
-                    Button("Done") {
-                        focusedField = nil
+                    HStack {
+                        Spacer()
+                        Button("Done") {
+                            focusedField = nil
+                        }
+                        .foregroundColor(AppTheme.Colors.tertiary)
                     }
                 }
             }
@@ -391,12 +405,13 @@ struct DurationPickerView: View {
                 .font(.headline)
                 .padding(.top)
             
-            Picker("", selection: $tempDuration) {
+            Picker("Duration", selection: $tempDuration) {
                 ForEach(0...90, id: \.self) { minutes in
                     Text("\(minutes) minutes").tag(Double(minutes))
                 }
             }
             .pickerStyle(.wheel)
+            .labelsHidden()
             
             HStack(spacing: 20) {
                 Button("Cancel") {
@@ -408,11 +423,13 @@ struct DurationPickerView: View {
                     duration = tempDuration
                     dismiss()
                 }
-                .foregroundColor(AppTheme.Colors.primary)
+                .foregroundColor(AppTheme.Colors.tertiary)
                 .fontWeight(.bold)
             }
+            .padding(.horizontal)
             .padding(.bottom)
         }
+        .frame(maxWidth: .infinity)
     }
 }
 
@@ -435,7 +452,7 @@ struct TappableReasonCard: View {
                 .lineLimit(1)
                 .minimumScaleFactor(0.8)
         }
-        .frame(maxWidth: .infinity)
+        .frame(minWidth: 0, maxWidth: .infinity)
         .frame(height: 70)
         .background(isSelected ? AppTheme.Colors.primary : AppTheme.Colors.secondary)
         .foregroundColor(AppTheme.Colors.text)
@@ -521,5 +538,12 @@ struct TappableButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .opacity(configuration.isPressed ? 0.7 : 1.0)
+    }
+}
+
+extension View {
+    func preventAutomaticKeyboardDismissal() -> some View {
+        self.textFieldStyle(.plain)
+            .ignoresSafeArea(.keyboard, edges: .bottom)
     }
 } 

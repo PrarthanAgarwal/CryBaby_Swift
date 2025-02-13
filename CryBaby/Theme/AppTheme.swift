@@ -4,7 +4,8 @@ enum AppTheme {
     // MARK: - Colors
     struct Colors {
         static let background = Color(hex: "#E8F9FF")  //  Warm blue background D1F8EF
-        static let primary = Color(hex: "#A1E3F9")     // Light peach/cream color
+        static let primary = Color(hex: "#A1E3F9")
+        static let tertiary = Color(hex: "#17b4e7")   
         static let secondary = Color.white.opacity(0.9) // Semi-transparent white
         static let text = Color(hex: "#1f2937")        // Deep charcoal gray for text
         static let textSecondary = Color(hex: "#6b7280") // Muted gray for secondary texst

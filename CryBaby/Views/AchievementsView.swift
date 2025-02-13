@@ -24,7 +24,7 @@ struct AchievementsView: View {
                             Circle()
                                 .trim(from: 0, to: achievements.isEmpty ? 0 : Double(unlockedCount) / Double(achievements.count))
                                 .stroke(
-                                    AppTheme.Colors.primary.opacity(0.9),
+                                    AppTheme.Colors.tertiary.opacity(0.9),
                                     style: StrokeStyle(
                                         lineWidth: 6,
                                         lineCap: .round,
@@ -44,7 +44,7 @@ struct AchievementsView: View {
                         VStack(alignment: .leading, spacing: 4) {
                             Text("\(unlockedCount) of \(achievements.count)")
                                 .font(.system(size: 28, weight: .bold))
-                                .foregroundColor(AppTheme.Colors.primary)
+                                .foregroundColor(AppTheme.Colors.tertiary)
                             
                             Text("Achievements Unlocked")
                                 .font(.subheadline)
@@ -92,12 +92,12 @@ struct AchievementRowView: View {
             // Achievement Icon
             ZStack {
                 Circle()
-                    .fill(achievement.isUnlocked ? AppTheme.Colors.primary.opacity(0.1) : AppTheme.Colors.secondary)
+                    .fill(achievement.isUnlocked ? AppTheme.Colors.tertiary.opacity(0.1) : AppTheme.Colors.secondary)
                     .frame(width: 48, height: 48)
                 
                 Image(systemName: achievement.icon)
                     .font(.system(size: 20))
-                    .foregroundColor(achievement.isUnlocked ? AppTheme.Colors.primary : AppTheme.Colors.textSecondary)
+                    .foregroundColor(achievement.isUnlocked ? AppTheme.Colors.tertiary : AppTheme.Colors.textSecondary)
             }
             
             VStack(alignment: .leading, spacing: 4) {
@@ -119,7 +119,7 @@ struct AchievementRowView: View {
                                 .cornerRadius(2)
                             
                             Rectangle()
-                                .fill(AppTheme.Colors.primary)
+                                .fill(AppTheme.Colors.tertiary)
                                 .frame(width: geometry.size.width * achievement.progress, height: 4)
                                 .cornerRadius(2)
                         }

@@ -48,6 +48,7 @@ struct SessionDetailView: View {
                     Button("Done") {
                         dismiss()
                     }
+                    .foregroundColor(AppTheme.Colors.tertiary)
                 }
             }
         }
