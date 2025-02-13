@@ -65,7 +65,7 @@ struct NewSessionView: View {
         NavigationView {
             Form {
                 Section(header: Text("Session Name").font(.headline).fontWeight(.bold)) {
-                    TextField("Session Name", text: $name)
+                    TextField("Give your cry a memorable name...", text: $name)
                         .focused($focusedField, equals: .name)
                         .textFieldStyle(.plain)
                         .padding(10)
@@ -86,12 +86,14 @@ struct NewSessionView: View {
                                     GridItem(.flexible(), spacing: 12)
                                 ], spacing: 12) {
                                     ForEach(pageReasons(for: pageIndex), id: \.self) { reason in
-                                        Button {
-                                            selectedReason = reason
-                                        } label: {
-                                            ReasonCard(reason: reason, isSelected: reason == selectedReason)
+                                        TappableReasonCard(
+                                            reason: reason,
+                                            isSelected: reason == selectedReason
+                                        ) {
+                                            withAnimation(.spring(response: 0.2)) {
+                                                selectedReason = reason
+                                            }
                                         }
-                                        .buttonStyle(.plain)
                                     }
                                 }
                                 .padding(.horizontal, 4)
@@ -119,12 +121,14 @@ struct NewSessionView: View {
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 12) {
                             ForEach(CryVolume.allCases, id: \.self) { volume in
-                                Button {
-                                    selectedVolume = volume
-                                } label: {
-                                    VolumeCard(volume: volume, isSelected: volume == selectedVolume)
+                                TappableVolumeCard(
+                                    volume: volume,
+                                    isSelected: volume == selectedVolume
+                                ) {
+                                    withAnimation(.spring(response: 0.2)) {
+                                        selectedVolume = volume
+                                    }
                                 }
-                                .buttonStyle(.plain)
                             }
                         }
                         .padding(.horizontal, 4)
@@ -163,14 +167,10 @@ struct NewSessionView: View {
                     VStack {
                         HStack(spacing: 12) {
                             ForEach(1...5, id: \.self) { rating in
-                                ZStack {
-                                    Image(systemName: rating <= satisfaction ? "star.fill" : "star")
-                                        .font(.system(size: 24))
-                                        .foregroundColor(rating <= satisfaction ? Color(hex: "#FFD95F") : AppTheme.Colors.textSecondary.opacity(0.3))
-                                }
-                                .frame(maxWidth: .infinity)
-                                .contentShape(Rectangle())
-                                .onTapGesture {
+                                TappableRatingButton(
+                                    rating: rating,
+                                    currentRating: satisfaction
+                                ) {
                                     withAnimation {
                                         satisfaction = rating
                                     }
@@ -191,7 +191,7 @@ struct NewSessionView: View {
                 }
                 .listRowBackground(Color.clear)
                 
-                Section(header: Text("Additional Notes").font(.headline).fontWeight(.bold)) {
+                Section(header: Text("Tell your story").font(.headline).fontWeight(.bold)) {
                     TextEditor(text: $notes)
                         .frame(height: 80)
                         .focused($focusedField, equals: .notes)
@@ -200,6 +200,14 @@ struct NewSessionView: View {
                         .overlay(
                             RoundedRectangle(cornerRadius: 8)
                                 .stroke(Color.black, lineWidth: 1)
+                        )
+                        .overlay(
+                            Text("Dear Diary...")
+                                .foregroundColor(AppTheme.Colors.textSecondary.opacity(0.8))
+                                .padding(.leading, 8)
+                                .padding(.top, 8)
+                                .allowsHitTesting(false)
+                                .opacity(notes.isEmpty ? 1 : 0)
                         )
                 }
                 .listRowBackground(Color.clear)
@@ -302,76 +310,6 @@ struct NewSessionView: View {
     }
 }
 
-struct ReasonCard: View {
-    let reason: CryReason
-    let isSelected: Bool
-    
-    private var reasonParts: (text: String, emoji: String) {
-        let components = reason.rawValue.split(separator: " ")
-        let emoji = String(components.last ?? "")
-        let text = components.dropLast().joined(separator: " ")
-        return (text: text, emoji: emoji)
-    }
-    
-    var body: some View {
-        VStack(spacing: 6) {
-            Text(reasonParts.emoji)
-                .font(.system(size: 28))
-            Text(reasonParts.text)
-                .font(.subheadline)
-                .fontWeight(.medium)
-                .lineLimit(1)
-                .minimumScaleFactor(0.8)
-        }
-        .frame(maxWidth: .infinity)
-        .frame(height: 70)
-        .background(isSelected ? AppTheme.Colors.primary : AppTheme.Colors.secondary)
-        .foregroundColor(AppTheme.Colors.text)
-        .cornerRadius(12)
-        .overlay(
-            RoundedRectangle(cornerRadius: 12)
-                .stroke(isSelected ? Color.black : Color.clear, lineWidth: 1)
-        )
-        .contentShape(Rectangle())
-        .scaleEffect(isSelected ? 1.05 : 1.0)
-        .animation(.spring(response: 0.2), value: isSelected)
-    }
-}
-
-struct VolumeCard: View {
-    let volume: CryVolume
-    let isSelected: Bool
-    
-    private var volumeParts: (text: String, emoji: String) {
-        let components = volume.rawValue.split(separator: " ")
-        return (
-            text: String(components.first ?? ""),
-            emoji: String(components.last ?? "")
-        )
-    }
-    
-    var body: some View {
-        VStack(spacing: 6) {
-            Text(volumeParts.emoji)
-                .font(.system(size: 28))
-            Text(volumeParts.text)
-                .font(.caption)
-                .fontWeight(.medium)
-        }
-        .frame(width: 80, height: 80)
-        .background(isSelected ? AppTheme.Colors.primary : AppTheme.Colors.secondary)
-        .foregroundColor(AppTheme.Colors.text)
-        .cornerRadius(12)
-        .overlay(
-            RoundedRectangle(cornerRadius: 12)
-                .stroke(isSelected ? Color.black : Color.clear, lineWidth: 1)
-        )
-        .scaleEffect(isSelected ? 1.05 : 1.0)
-        .animation(.spring(response: 0.2), value: isSelected)
-        .contentShape(Rectangle())
-    }
-}
-
 struct ScaleButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
@@ -418,5 +356,95 @@ struct DurationPickerView: View {
             }
             .padding(.bottom)
         }
+    }
+}
+
+struct TappableReasonCard: View {
+    let reason: CryReason
+    let isSelected: Bool
+    let action: () -> Void
+    
+    var body: some View {
+        Button(action: action) {
+            VStack(spacing: 6) {
+                let parts = reason.rawValue.split(separator: " ")
+                let emoji = String(parts.last ?? "")
+                let text = parts.dropLast().joined(separator: " ")
+                
+                Text(emoji)
+                    .font(.system(size: 28))
+                Text(text)
+                    .font(.subheadline)
+                    .fontWeight(.medium)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
+            }
+            .frame(maxWidth: .infinity)
+            .frame(height: 70)
+            .background(isSelected ? AppTheme.Colors.primary : AppTheme.Colors.secondary)
+            .foregroundColor(AppTheme.Colors.text)
+            .cornerRadius(12)
+            .overlay(
+                RoundedRectangle(cornerRadius: 12)
+                    .stroke(isSelected ? Color.black : Color.clear, lineWidth: 1)
+            )
+        }
+        .buttonStyle(TappableButtonStyle())
+    }
+}
+
+struct TappableVolumeCard: View {
+    let volume: CryVolume
+    let isSelected: Bool
+    let action: () -> Void
+    
+    var body: some View {
+        Button(action: action) {
+            VStack(spacing: 6) {
+                let parts = volume.rawValue.split(separator: " ")
+                let emoji = String(parts.last ?? "")
+                let text = String(parts.first ?? "")
+                
+                Text(emoji)
+                    .font(.system(size: 28))
+                Text(text)
+                    .font(.caption)
+                    .fontWeight(.medium)
+            }
+            .frame(width: 80, height: 80)
+            .background(isSelected ? AppTheme.Colors.primary : AppTheme.Colors.secondary)
+            .foregroundColor(AppTheme.Colors.text)
+            .cornerRadius(12)
+            .overlay(
+                RoundedRectangle(cornerRadius: 12)
+                    .stroke(isSelected ? Color.black : Color.clear, lineWidth: 1)
+            )
+        }
+        .buttonStyle(TappableButtonStyle())
+    }
+}
+
+struct TappableRatingButton: View {
+    let rating: Int
+    let currentRating: Int
+    let action: () -> Void
+    
+    var body: some View {
+        Button(action: action) {
+            Image(systemName: rating <= currentRating ? "star.fill" : "star")
+                .font(.system(size: 24))
+                .foregroundColor(rating <= currentRating ? Color(hex: "#FFD95F") : AppTheme.Colors.textSecondary.opacity(0.3))
+                .frame(maxWidth: .infinity)
+                .frame(height: 44)
+        }
+        .buttonStyle(TappableButtonStyle())
+    }
+}
+
+struct TappableButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .contentShape(Rectangle())
+            .opacity(configuration.isPressed ? 0.7 : 1.0)
     }
 } 
