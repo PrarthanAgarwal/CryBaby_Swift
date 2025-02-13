@@ -259,26 +259,18 @@ struct NewSessionView: View {
                 .listRowBackground(Color.clear)
                 
                 Section {
-                    Button(action: {
-                        withAnimation {
-                            saveSession()
+                    SaveSessionButton(
+                        isEnabled: !name.isEmpty && satisfaction > 0,
+                        action: {
+                            withAnimation {
+                                saveSession()
+                            }
                         }
-                    }) {
-                        HStack {
-                            Spacer()
-                            Text("Save Session")
-                                .font(.headline)
-                                .foregroundColor(.white)
-                            Spacer()
-                        }
-                        .padding()
-                        .background(name.isEmpty || satisfaction == 0 ? AppTheme.Colors.textSecondary : AppTheme.Colors.tertiary)
-                        .cornerRadius(12)
-                    }
-                    .buttonStyle(ScaleButtonStyle())
-                    .disabled(name.isEmpty || satisfaction == 0)
+                    )
                 }
                 .listRowBackground(Color.clear)
+                .listRowInsets(EdgeInsets())
+                .buttonStyle(BorderlessButtonStyle())
             }
             .scrollContentBackground(.hidden)
             .background(AppTheme.Colors.background)
@@ -574,6 +566,8 @@ struct TappableButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .opacity(configuration.isPressed ? 0.7 : 1.0)
+            .scaleEffect(configuration.isPressed ? 0.98 : 1.0)
+            .animation(.easeInOut(duration: 0.1), value: configuration.isPressed)
     }
 }
 
@@ -581,5 +575,43 @@ extension View {
     func preventAutomaticKeyboardDismissal() -> some View {
         self.textFieldStyle(.plain)
             .ignoresSafeArea(.keyboard, edges: .bottom)
+    }
+}
+
+struct SaveSessionButton: View {
+    let isEnabled: Bool
+    let action: () -> Void
+    
+    var body: some View {
+        Button(action: {
+            let generator = UIImpactFeedbackGenerator(style: .medium)
+            generator.impactOccurred()
+            action()
+        }) {
+            HStack {
+                Spacer()
+                Text("Save Session")
+                    .font(.headline)
+                    .foregroundColor(.white)
+                Spacer()
+            }
+            .frame(maxWidth: .infinity)
+            .padding()
+            .background(
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(isEnabled ? AppTheme.Colors.tertiary : AppTheme.Colors.textSecondary)
+            )
+        }
+        .buttonStyle(BorderlessButtonStyle())
+        .disabled(!isEnabled)
+        .opacity(isEnabled ? 1 : 0.6)
+    }
+}
+
+struct ButtonBoundsPreferenceKey: PreferenceKey {
+    static var defaultValue: CGRect = .zero
+    
+    static func reduce(value: inout CGRect, nextValue: () -> CGRect) {
+        value = nextValue()
     }
 } 
