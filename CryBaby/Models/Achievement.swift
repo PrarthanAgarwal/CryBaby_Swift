@@ -38,6 +38,11 @@ enum AchievementType: String, Codable, CaseIterable {
     case variety = "Variety"
     case frequency = "Frequency"
     case duration = "Duration"
+    case notes = "Notes"
+    case satisfaction = "Satisfaction"
+    case intensity = "Intensity"
+    case timeCollector = "Time Collector"
+    case quickRelease = "Quick Release"
 }
 
 extension Achievement {
@@ -91,8 +96,63 @@ extension Achievement {
                 shouldUnlock = sessionsInWeek.count >= 5
                 
             case .duration:
-                // Check for a session longer than 30 minutes
-                shouldUnlock = sessions.contains { $0.duration >= 1800 }
+                // Check for a session longer than 1 hour
+                shouldUnlock = sessions.contains { $0.duration >= 3600 }
+                
+            case .notes:
+                // Check for 10 consecutive sessions with notes
+                let sortedSessions = sessions.sorted { $0.date > $1.date }
+                var consecutiveWithNotes = 0
+                for session in sortedSessions {
+                    if let notes = session.notes, !notes.isEmpty {
+                        consecutiveWithNotes += 1
+                        if consecutiveWithNotes >= 10 {
+                            shouldUnlock = true
+                            break
+                        }
+                    } else {
+                        break
+                    }
+                }
+                
+            case .satisfaction:
+                // Check for 3 consecutive 5-star sessions
+                let sortedSessions = sessions.sorted { $0.date > $1.date }
+                var consecutiveFiveStars = 0
+                for session in sortedSessions {
+                    if session.satisfaction == 5 {
+                        consecutiveFiveStars += 1
+                        if consecutiveFiveStars >= 3 {
+                            shouldUnlock = true
+                            break
+                        }
+                    } else {
+                        consecutiveFiveStars = 0
+                    }
+                }
+                
+            case .intensity:
+                // Check for 3 sessions within 24 hours
+                let calendar = Calendar.current
+                let sortedSessions = sessions.sorted { $0.date > $1.date }
+                for i in 0..<(sortedSessions.count - 2) {
+                    let firstSession = sortedSessions[i]
+                    let thirdSession = sortedSessions[i + 2]
+                    let hoursBetween = calendar.dateComponents([.hour], from: thirdSession.date, to: firstSession.date).hour ?? 0
+                    if hoursBetween < 24 {
+                        shouldUnlock = true
+                        break
+                    }
+                }
+                
+            case .timeCollector:
+                // Check for sessions in every hour of the day
+                let hours = Set(sessions.map { Calendar.current.component(.hour, from: $0.date) })
+                shouldUnlock = hours.count == 24
+                
+            case .quickRelease:
+                // Check for a session under 5 minutes
+                shouldUnlock = sessions.contains { $0.duration <= 300 }
             }
             
             if shouldUnlock {

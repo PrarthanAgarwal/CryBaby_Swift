@@ -313,8 +313,8 @@ struct KeywordsCard: View {
                             .font(.caption)
                             .padding(.horizontal, 12)
                             .padding(.vertical, 6)
-                            .background(AppTheme.Colors.primary.opacity(0.1))
-                            .foregroundColor(AppTheme.Colors.primary)
+                            .background(AppTheme.Colors.tertiary.opacity(0.1))
+                            .foregroundColor(AppTheme.Colors.tertiary)
                             .cornerRadius(AppTheme.Layout.cornerRadius)
                     }
                 }

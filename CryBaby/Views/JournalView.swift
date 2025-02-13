@@ -164,16 +164,49 @@ struct SessionRowView: View {
 struct CalendarView: View {
     @Binding var selectedDate: Date?
     let markedDates: [Date]
+    @State private var currentDate = Date()
     
     var body: some View {
         let calendar = Calendar.current
-        let currentMonth = calendar.component(.month, from: Date())
-        let currentYear = calendar.component(.year, from: Date())
+        let month = calendar.component(.month, from: currentDate)
+        let year = calendar.component(.year, from: currentDate)
         
-        VStack {
-            Text("\(Date(), formatter: monthYearFormatter)")
-                .font(.title2)
-                .padding(.top)
+        VStack(spacing: 20) {
+            // Month Year Header with Navigation
+            HStack {
+                Button {
+                    withAnimation {
+                        currentDate = calendar.date(byAdding: .month, value: -1, to: currentDate) ?? currentDate
+                    }
+                } label: {
+                    Image(systemName: "chevron.left")
+                        .foregroundColor(AppTheme.Colors.tertiary)
+                        .font(.title3)
+                }
+                .buttonStyle(PlainButtonStyle())
+                .frame(width: 44, height: 44)
+                
+                Spacer()
+                
+                Text("\(currentDate, formatter: monthYearFormatter)")
+                    .font(.title2)
+                    .foregroundColor(AppTheme.Colors.text)
+                
+                Spacer()
+                
+                Button {
+                    withAnimation {
+                        currentDate = calendar.date(byAdding: .month, value: 1, to: currentDate) ?? currentDate
+                    }
+                } label: {
+                    Image(systemName: "chevron.right")
+                        .foregroundColor(AppTheme.Colors.tertiary)
+                        .font(.title3)
+                }
+                .buttonStyle(PlainButtonStyle())
+                .frame(width: 44, height: 44)
+            }
+            .padding(.horizontal)
             
             LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 7), spacing: 8) {
                 ForEach(weekdaySymbols, id: \.self) { symbol in
@@ -182,29 +215,33 @@ struct CalendarView: View {
                         .foregroundColor(AppTheme.Colors.textSecondary)
                 }
                 
-                ForEach(daysInMonth(month: currentMonth, year: currentYear), id: \.self) { date in
+                ForEach(daysInMonth(month: month, year: year), id: \.self) { date in
                     if let date = date {
-                        let isMarked = markedDates.contains { calendar.isDate($0, inSameDayAs: date) }
-                        let dayId = calendar.startOfDay(for: date).timeIntervalSince1970
-                        
-                        Circle()
-                            .fill(isMarked ? AppTheme.Colors.tertiary.opacity(0.2) : Color.clear)
-                            .overlay(
-                                Text("\(calendar.component(.day, from: date))")
-                                    .foregroundColor(isMarked ? AppTheme.Colors.tertiary : AppTheme.Colors.text)
-                            )
-                            .id(dayId)
-                            .onTapGesture {
-                                selectedDate = date
+                        DayCell(
+                            date: date,
+                            isMarked: markedDates.contains { calendar.isDate($0, inSameDayAs: date) },
+                            isSelected: selectedDate.map { calendar.isDate($0, inSameDayAs: date) } ?? false,
+                            onTap: {
+                                withAnimation {
+                                    if selectedDate.map({ calendar.isDate($0, inSameDayAs: date) }) ?? false {
+                                        selectedDate = nil
+                                    } else {
+                                        selectedDate = date
+                                    }
+                                }
                             }
+                        )
                     } else {
                         Color.clear
+                            .frame(height: 35)
                             .id(UUID())
                     }
                 }
             }
-            .padding()
+            .padding(.horizontal)
         }
+        .background(AppTheme.Colors.surface)
+        .cornerRadius(12)
     }
     
     private var weekdaySymbols: [String] {
@@ -231,6 +268,34 @@ struct CalendarView: View {
         }
         
         return days
+    }
+}
+
+struct DayCell: View {
+    let date: Date
+    let isMarked: Bool
+    let isSelected: Bool
+    let onTap: () -> Void
+    
+    var body: some View {
+        Button(action: onTap) {
+            ZStack {
+                // Background circle for marked dates
+                Circle()
+                    .fill(isMarked ? AppTheme.Colors.tertiary.opacity(0.2) : Color.clear)
+                
+                // Selection indicator
+                Circle()
+                    .strokeBorder(isSelected ? AppTheme.Colors.tertiary : Color.clear, lineWidth: 2)
+                    .animation(.easeInOut(duration: 0.2), value: isSelected)
+                
+                Text("\(Calendar.current.component(.day, from: date))")
+                    .foregroundColor(isMarked ? AppTheme.Colors.tertiary : AppTheme.Colors.text)
+                    .fontWeight(isSelected ? .bold : .regular)
+            }
+        }
+        .buttonStyle(PlainButtonStyle())
+        .frame(height: 35)
     }
 }
 

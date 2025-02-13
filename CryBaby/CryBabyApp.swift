@@ -75,7 +75,31 @@ struct CryBabyApp: App {
             Achievement(name: "Volume Master",
                        description: "Experience all volumes of crying",
                        icon: "speaker.wave.3.fill",
-                       type: .volume)
+                       type: .volume),
+            Achievement(name: "Diary Master",
+                       description: "Write detailed notes for 10 consecutive sessions",
+                       icon: "book.fill",
+                       type: .notes),
+            Achievement(name: "Emotional Growth",
+                       description: "Achieve 5-star satisfaction in 3 consecutive sessions",
+                       icon: "heart.fill",
+                       type: .satisfaction),
+            Achievement(name: "Marathon Crier",
+                       description: "Complete a crying session lasting over 1 hour",
+                       icon: "clock.badge.checkmark.fill",
+                       type: .duration),
+            Achievement(name: "Cry-athlon Champion",
+                       description: "Complete 3 crying sessions within 24 hours",
+                       icon: "trophy.circle.fill",
+                       type: .intensity),
+            Achievement(name: "Tear Time Traveler",
+                       description: "Log a session in every hour of the day",
+                       icon: "clock.arrow.circlepath",
+                       type: .timeCollector),
+            Achievement(name: "Speed Crier",
+                       description: "Complete a session in under 5 minutes",
+                       icon: "bolt.circle.fill",
+                       type: .quickRelease)
         ]
         
         achievements.forEach { achievement in

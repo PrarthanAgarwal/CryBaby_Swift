@@ -91,22 +91,19 @@ struct NewSessionView: View {
         NavigationView {
             Form {
                 Section(header: Text("Session Name").font(.headline).fontWeight(.bold)) {
-                    VStack(spacing: 0) {
-                        TextField("Give your cry a memorable name...", text: $name)
-                            .focused($focusedField, equals: .name)
-                            .textFieldStyle(.plain)
-                            .frame(maxWidth: .infinity)
-                            .padding(10)
-                            .background(AppTheme.Colors.secondary)
-                            .cornerRadius(8)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .stroke(Color.black, lineWidth: 1)
-                            )
-                    }
-                    .fixedSize(horizontal: false, vertical: true)
+                    TextField("Give your cry a memorable name...", text: $name)
+                        .focused($focusedField, equals: .name)
+                        .textFieldStyle(.plain)
+                        .padding(10)
+                        .background(AppTheme.Colors.secondary)
+                        .cornerRadius(8)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 8)
+                                .stroke(Color.black, lineWidth: 1)
+                        )
                 }
                 .listRowBackground(Color.clear)
+                .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16))
                 
                 Section(header: Text("Why Today?").font(.headline).fontWeight(.bold)) {
                     VStack(spacing: 0) {
@@ -211,7 +208,7 @@ struct NewSessionView: View {
                 }
                 .listRowBackground(Color.clear)
                 
-                Section(header: Text("Rate Your Session").font(.headline).fontWeight(.bold)) {
+                Section(header: Text("Post-Cry Check-in").font(.headline).fontWeight(.bold)) {
                     VStack {
                         HStack(spacing: 12) {
                             ForEach(1...5, id: \.self) { rating in
@@ -302,13 +299,10 @@ struct NewSessionView: View {
             }
             .toolbar {
                 ToolbarItem(placement: .keyboard) {
-                    HStack {
-                        Spacer()
-                        Button("Done") {
-                            focusedField = nil
-                        }
-                        .foregroundColor(AppTheme.Colors.tertiary)
+                    Button("Done") {
+                        focusedField = nil
                     }
+                    .foregroundColor(AppTheme.Colors.tertiary)
                 }
             }
         }

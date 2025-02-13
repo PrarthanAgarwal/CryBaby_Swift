@@ -42,21 +42,21 @@ final class CrySession {
 }
 
 enum CryReason: String, CaseIterable {
-    case memoryLane = "Memory Lane 📸"
-    case anxiety = "Anxiety 😰"
-    case happyTears = "Happy Tears 🥹"
+    case heartbreak = "Hurt Feelings 🥺"
+    case anxiety = "Anxiety 😶‍🌫️"
     case justBecause = "Just Because 🤷"
+    case happyTears = "Happy Tears 🥹"
     case overwhelmed = "Overwhelmed 😩"
-    case heartbreak = "Heartbreak 💔"
+    case memoryLane = "Memory Lane 🎞️ "
     case frustration = "Frustration 😤"
-    case laughingFit = "Laughing Fit 🤣"
+    case laughingFit = "Grateful Heart ❤️"
 }
 
 enum CryVolume: String, CaseIterable {
     case glass = "Glass 🥛"
     case pint = "Pint 🍺"
-    case gallon = "Gallon 🫗"
+    case gallon = "Bucket 🪣"
     case waterfall = "Waterfall 🌊"
-    case floods = "Floods 🌧️"
-    case tsunami = "Tsunami 🌪️"
+    case floods = "Floods 🌊🏡"
+    case tsunami = "Tsunami 🌊🏙️"
 } 
