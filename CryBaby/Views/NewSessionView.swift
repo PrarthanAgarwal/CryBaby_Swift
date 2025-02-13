@@ -1,6 +1,25 @@
 import SwiftUI
 import SwiftData
 
+private struct DebugKey: EnvironmentKey {
+    static let defaultValue = false
+}
+
+extension EnvironmentValues {
+    var isDebugging: Bool {
+        get { self[DebugKey.self] }
+        set { self[DebugKey.self] = newValue }
+    }
+}
+
+extension View {
+    func debugLog(_ message: String) {
+        #if DEBUG
+        print(message)
+        #endif
+    }
+}
+
 struct NewSessionView: View {
     @Environment(\.modelContext) private var modelContext
     @FocusState private var focusedField: Field?
@@ -16,6 +35,7 @@ struct NewSessionView: View {
     @State private var currentPage = 0
     @State private var showingAchievementPopup = false
     @State private var unlockedAchievement: Achievement?
+    @Environment(\.isDebugging) private var isDebugging
     
     init() {
         _date = State(initialValue: Date())
@@ -61,6 +81,12 @@ struct NewSessionView: View {
         }
     }
     
+    private func log(_ message: String) {
+        if isDebugging {
+            debugLog(message)
+        }
+    }
+    
     var body: some View {
         NavigationView {
             Form {
@@ -78,7 +104,7 @@ struct NewSessionView: View {
                 .listRowBackground(Color.clear)
                 
                 Section(header: Text("Why Today?").font(.headline).fontWeight(.bold)) {
-                    VStack {
+                    VStack(spacing: 0) {
                         TabView(selection: $currentPage) {
                             ForEach(0..<numberOfReasonPages, id: \.self) { pageIndex in
                                 LazyVGrid(columns: [
@@ -94,6 +120,7 @@ struct NewSessionView: View {
                                                 selectedReason = reason
                                             }
                                         }
+                                        .id(reason)
                                     }
                                 }
                                 .padding(.horizontal, 4)
@@ -118,21 +145,32 @@ struct NewSessionView: View {
                 .listRowBackground(Color.clear)
                 
                 Section(header: Text("How Much Tears?").font(.headline).fontWeight(.bold)) {
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 12) {
-                            ForEach(CryVolume.allCases, id: \.self) { volume in
-                                TappableVolumeCard(
-                                    volume: volume,
-                                    isSelected: volume == selectedVolume
-                                ) {
-                                    withAnimation(.spring(response: 0.2)) {
-                                        selectedVolume = volume
+                    ScrollViewReader { proxy in
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            LazyHStack(spacing: 12) {
+                                ForEach(CryVolume.allCases, id: \.self) { volume in
+                                    TappableVolumeCard(
+                                        volume: volume,
+                                        isSelected: volume == selectedVolume
+                                    ) {
+                                        withAnimation(.spring(response: 0.2)) {
+                                            selectedVolume = volume
+                                        }
                                     }
+                                    .id(volume)
+                                }
+                            }
+                            .padding(.horizontal, 4)
+                            .padding(.vertical, 8)
+                        }
+                        .onAppear {
+                            // Ensure content is properly laid out
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                withAnimation {
+                                    proxy.scrollTo(selectedVolume, anchor: .center)
                                 }
                             }
                         }
-                        .padding(.horizontal, 4)
-                        .padding(.vertical, 8)
                     }
                 }
                 .listRowBackground(Color.clear)
@@ -268,6 +306,25 @@ struct NewSessionView: View {
                 )
             }
         }
+        .overlay(debugOverlay)
+    }
+    
+    @ViewBuilder
+    private var debugOverlay: some View {
+        if isDebugging {
+            VStack {
+                HStack {
+                    Text("Debug Mode")
+                        .font(.caption)
+                        .padding(4)
+                        .background(Color.yellow.opacity(0.3))
+                        .cornerRadius(4)
+                    Spacer()
+                }
+                Spacer()
+            }
+            .padding()
+        }
     }
     
     private func pageReasons(for pageIndex: Int) -> [CryReason] {
@@ -365,31 +422,38 @@ struct TappableReasonCard: View {
     let action: () -> Void
     
     var body: some View {
-        Button(action: action) {
-            VStack(spacing: 6) {
-                let parts = reason.rawValue.split(separator: " ")
-                let emoji = String(parts.last ?? "")
-                let text = parts.dropLast().joined(separator: " ")
-                
-                Text(emoji)
-                    .font(.system(size: 28))
-                Text(text)
-                    .font(.subheadline)
-                    .fontWeight(.medium)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.8)
-            }
-            .frame(maxWidth: .infinity)
-            .frame(height: 70)
-            .background(isSelected ? AppTheme.Colors.primary : AppTheme.Colors.secondary)
-            .foregroundColor(AppTheme.Colors.text)
-            .cornerRadius(12)
-            .overlay(
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(isSelected ? Color.black : Color.clear, lineWidth: 1)
-            )
+        VStack(spacing: 6) {
+            let parts = reason.rawValue.split(separator: " ")
+            let emoji = String(parts.last ?? "")
+            let text = parts.dropLast().joined(separator: " ")
+            
+            Text(emoji)
+                .font(.system(size: 28))
+            Text(text)
+                .font(.subheadline)
+                .fontWeight(.medium)
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
         }
-        .buttonStyle(TappableButtonStyle())
+        .frame(maxWidth: .infinity)
+        .frame(height: 70)
+        .background(isSelected ? AppTheme.Colors.primary : AppTheme.Colors.secondary)
+        .foregroundColor(AppTheme.Colors.text)
+        .cornerRadius(12)
+        .overlay(
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(isSelected ? Color.black : Color.clear, lineWidth: 1)
+        )
+        .contentShape(Rectangle())
+        .highPriorityGesture(
+            TapGesture()
+                .onEnded { _ in
+                    print("🔵 Reason tapped: \(reason) at \(Date())")
+                    withAnimation(.spring(response: 0.2)) {
+                        action()
+                    }
+                }
+        )
     }
 }
 
@@ -399,28 +463,35 @@ struct TappableVolumeCard: View {
     let action: () -> Void
     
     var body: some View {
-        Button(action: action) {
-            VStack(spacing: 6) {
-                let parts = volume.rawValue.split(separator: " ")
-                let emoji = String(parts.last ?? "")
-                let text = String(parts.first ?? "")
-                
-                Text(emoji)
-                    .font(.system(size: 28))
-                Text(text)
-                    .font(.caption)
-                    .fontWeight(.medium)
-            }
-            .frame(width: 80, height: 80)
-            .background(isSelected ? AppTheme.Colors.primary : AppTheme.Colors.secondary)
-            .foregroundColor(AppTheme.Colors.text)
-            .cornerRadius(12)
-            .overlay(
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(isSelected ? Color.black : Color.clear, lineWidth: 1)
-            )
+        VStack(spacing: 6) {
+            let parts = volume.rawValue.split(separator: " ")
+            let emoji = String(parts.last ?? "")
+            let text = String(parts.first ?? "")
+            
+            Text(emoji)
+                .font(.system(size: 28))
+            Text(text)
+                .font(.caption)
+                .fontWeight(.medium)
         }
-        .buttonStyle(TappableButtonStyle())
+        .frame(width: 80, height: 80)
+        .background(isSelected ? AppTheme.Colors.primary : AppTheme.Colors.secondary)
+        .foregroundColor(AppTheme.Colors.text)
+        .cornerRadius(12)
+        .overlay(
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(isSelected ? Color.black : Color.clear, lineWidth: 1)
+        )
+        .contentShape(Rectangle())
+        .highPriorityGesture(
+            TapGesture()
+                .onEnded { _ in
+                    print("🔵 Volume tapped: \(volume) at \(Date())")
+                    withAnimation(.spring(response: 0.2)) {
+                        action()
+                    }
+                }
+        )
     }
 }
 
@@ -430,21 +501,25 @@ struct TappableRatingButton: View {
     let action: () -> Void
     
     var body: some View {
-        Button(action: action) {
-            Image(systemName: rating <= currentRating ? "star.fill" : "star")
-                .font(.system(size: 24))
-                .foregroundColor(rating <= currentRating ? Color(hex: "#FFD95F") : AppTheme.Colors.textSecondary.opacity(0.3))
-                .frame(maxWidth: .infinity)
-                .frame(height: 44)
-        }
-        .buttonStyle(TappableButtonStyle())
+        Image(systemName: rating <= currentRating ? "star.fill" : "star")
+            .font(.system(size: 24))
+            .foregroundColor(rating <= currentRating ? Color(hex: "#FFD95F") : AppTheme.Colors.textSecondary.opacity(0.3))
+            .frame(maxWidth: .infinity)
+            .frame(height: 44)
+            .contentShape(Rectangle())
+            .highPriorityGesture(
+                TapGesture()
+                    .onEnded { _ in
+                        print("⭐️ Rating tapped: \(rating) at \(Date())")
+                        action()
+                    }
+            )
     }
 }
 
 struct TappableButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .contentShape(Rectangle())
             .opacity(configuration.isPressed ? 0.7 : 1.0)
     }
 } 
