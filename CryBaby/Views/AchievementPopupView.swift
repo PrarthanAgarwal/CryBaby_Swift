@@ -6,52 +6,61 @@ struct AchievementPopupView: View {
     @Binding var isPresented: Bool
     
     var body: some View {
-        VStack(spacing: 12) {
+        VStack(spacing: 16) {
             // Achievement Icon and Badge
             ZStack {
                 Circle()
                     .fill(AppTheme.Colors.surface)
-                    .frame(width: 56, height: 56)
-                    .shadow(color: Color.black.opacity(0.1), radius: 8, x: 0, y: 4)
+                    .frame(width: 66, height: 66)
+                    .shadow(color: Color.black.opacity(0.15), radius: 8, x: 0, y: 4)
                 
                 Image(systemName: achievement.icon)
-                    .font(.system(size: 24))
-                    .foregroundColor(AppTheme.Colors.primary)
+                    .font(.system(size: 28))
+                    .foregroundColor(AppTheme.Colors.tertiary)
             }
             
             // Achievement Text
-            VStack(spacing: 4) {
+            VStack(spacing: 6) {
                 Text("Achievement Unlocked!")
-                    .font(.subheadline)
+                    .font(.title3)
                     .fontWeight(.semibold)
                     .foregroundColor(AppTheme.Colors.text)
                 
                 Text(achievement.name)
-                    .font(.footnote)
+                    .font(.subheadline)
                     .foregroundColor(AppTheme.Colors.textSecondary)
                     .multilineTextAlignment(.center)
             }
         }
-        .padding(.vertical, 16)
-        .padding(.horizontal, 24)
+        .padding(.vertical, 20)
+        .padding(.horizontal, 32)
         .background(
             ZStack {
+                // Solid white background
+                Color.white
+                
+                // Surface color overlay
                 AppTheme.Colors.surface
                 
                 // Small confetti effect in background
                 LottieView(name: "confetti", loopMode: .playOnce)
-                    .frame(width: 200, height: 200)
-                    .opacity(0.6)
+                    .frame(width: 250, height: 250)
+                    .opacity(0.8)
                     .allowsHitTesting(false)
             }
         )
-        .cornerRadius(16)
-        .shadow(color: Color.black.opacity(0.1), radius: 20, x: 0, y: 10)
+        .cornerRadius(20)
+        .shadow(
+            color: Color.black.opacity(0.2),
+            radius: 28,
+            x: 0,
+            y: 14
+        )
         // Animate the popup from top
         .transition(.move(edge: .top).combined(with: .opacity))
         // Position it at the top of the screen with some padding
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-        .padding(.top, 44)
+        .padding(.top, 60)
         // Add tap to dismiss
         .onTapGesture {
             withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
@@ -60,7 +69,7 @@ struct AchievementPopupView: View {
         }
         // Semi-transparent background
         .background(
-            Color.black.opacity(0.2)
+            Color.black.opacity(0.3)
                 .edgesIgnoringSafeArea(.all)
                 .onTapGesture {
                     withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
@@ -68,13 +77,8 @@ struct AchievementPopupView: View {
                     }
                 }
         )
-        // Auto-dismiss after 3 seconds
         .onAppear {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                    isPresented = false
-                }
-            }
+            print("🏅 Achievement popup appeared: \(achievement.name)")
         }
     }
 }

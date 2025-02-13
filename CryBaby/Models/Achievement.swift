@@ -37,7 +37,6 @@ enum AchievementType: String, Codable, CaseIterable {
     case volume = "Volume"
     case variety = "Variety"
     case frequency = "Frequency"
-    case duration = "Duration"
     case notes = "Notes"
     case satisfaction = "Satisfaction"
     case intensity = "Intensity"
@@ -46,10 +45,13 @@ enum AchievementType: String, Codable, CaseIterable {
 }
 
 extension Achievement {
-    static func checkAchievements(sessions: [CrySession], modelContext: ModelContext) -> Achievement? {
+    static func checkAchievements(sessions: [CrySession], modelContext: ModelContext) -> [Achievement] {
         // Get all achievements
         let descriptor = FetchDescriptor<Achievement>()
-        guard let achievements = try? modelContext.fetch(descriptor) else { return nil }
+        guard let achievements = try? modelContext.fetch(descriptor) else { return [] }
+        
+        var unlockedAchievements: [Achievement] = []
+        print("🏆 Checking achievements for \(sessions.count) sessions")
         
         // Check each achievement
         for achievement in achievements where !achievement.isUnlocked {
@@ -58,11 +60,16 @@ extension Achievement {
             switch achievement.type {
             case .firstCry:
                 shouldUnlock = sessions.count == 1
+                if shouldUnlock {
+                    print("🏆 First Cry achievement unlocked")
+                }
                 
             case .streak:
                 // Check for 3-day streak
                 let calendar = Calendar.current
                 let sortedDates = sessions.map { $0.date }.sorted()
+                // Need at least 3 sessions for a streak
+                guard sortedDates.count >= 3 else { break }
                 var currentStreak = 1
                 
                 for i in 1..<sortedDates.count {
@@ -95,13 +102,11 @@ extension Achievement {
                 let sessionsInWeek = sessions.filter { $0.date >= oneWeekAgo }
                 shouldUnlock = sessionsInWeek.count >= 5
                 
-            case .duration:
-                // Check for a session longer than 1 hour
-                shouldUnlock = sessions.contains { $0.duration >= 3600 }
-                
             case .notes:
                 // Check for 10 consecutive sessions with notes
                 let sortedSessions = sessions.sorted { $0.date > $1.date }
+                // Need at least 10 sessions for this achievement
+                guard sortedSessions.count >= 10 else { break }
                 var consecutiveWithNotes = 0
                 for session in sortedSessions {
                     if let notes = session.notes, !notes.isEmpty {
@@ -118,6 +123,8 @@ extension Achievement {
             case .satisfaction:
                 // Check for 3 consecutive 5-star sessions
                 let sortedSessions = sessions.sorted { $0.date > $1.date }
+                // Need at least 3 sessions for this achievement
+                guard sortedSessions.count >= 3 else { break }
                 var consecutiveFiveStars = 0
                 for session in sortedSessions {
                     if session.satisfaction == 5 {
@@ -135,10 +142,12 @@ extension Achievement {
                 // Check for 3 sessions within 24 hours
                 let calendar = Calendar.current
                 let sortedSessions = sessions.sorted { $0.date > $1.date }
+                // Need at least 3 sessions for this achievement
+                guard sortedSessions.count >= 3 else { break }
                 for i in 0..<(sortedSessions.count - 2) {
                     let firstSession = sortedSessions[i]
                     let thirdSession = sortedSessions[i + 2]
-                    let hoursBetween = calendar.dateComponents([.hour], from: thirdSession.date, to: firstSession.date).hour ?? 0
+                    let hoursBetween = calendar.dateComponents([.hour], from: firstSession.date, to: thirdSession.date).hour ?? 0
                     if hoursBetween < 24 {
                         shouldUnlock = true
                         break
@@ -158,10 +167,12 @@ extension Achievement {
             if shouldUnlock {
                 achievement.isUnlocked = true
                 achievement.unlockedDate = Date()
-                return achievement
+                unlockedAchievements.append(achievement)
+                print("🏆 Added achievement to unlocked list: \(achievement.name)")
             }
         }
         
-        return nil
+        print("🏆 Total achievements unlocked: \(unlockedAchievements.count)")
+        return unlockedAchievements
     }
 } 

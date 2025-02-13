@@ -34,7 +34,8 @@ struct NewSessionView: View {
     @State private var showingDurationPicker = false
     @State private var currentPage = 0
     @State private var showingAchievementPopup = false
-    @State private var unlockedAchievement: Achievement?
+    @State private var unlockedAchievements: [Achievement] = []
+    @State private var currentAchievementIndex = 0
     @Environment(\.isDebugging) private var isDebugging
     
     init() {
@@ -208,7 +209,7 @@ struct NewSessionView: View {
                 }
                 .listRowBackground(Color.clear)
                 
-                Section(header: Text("Post-Cry Check-in").font(.headline).fontWeight(.bold)) {
+                Section(header: Text("Emotional Relief Level").font(.headline).fontWeight(.bold)) {
                     VStack {
                         HStack(spacing: 12) {
                             ForEach(1...5, id: \.self) { rating in
@@ -299,19 +300,53 @@ struct NewSessionView: View {
             }
             .toolbar {
                 ToolbarItem(placement: .keyboard) {
-                    Button("Done") {
-                        focusedField = nil
+                    HStack {
+                        Spacer()
+                        Button("Done") {
+                            focusedField = nil
+                        }
+                        .foregroundColor(AppTheme.Colors.tertiary)
                     }
-                    .foregroundColor(AppTheme.Colors.tertiary)
                 }
             }
         }
         .overlay {
-            if showingAchievementPopup, let achievement = unlockedAchievement {
-                AchievementPopupView(
-                    achievement: achievement,
-                    isPresented: $showingAchievementPopup
-                )
+            if !unlockedAchievements.isEmpty {
+                ZStack {
+                    Color.black.opacity(0.2)
+                        .edgesIgnoringSafeArea(.all)
+                        .onTapGesture {
+                            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                showingAchievementPopup = false
+                                unlockedAchievements = []
+                                showingSuccessAlert = true
+                            }
+                        }
+                    
+                    VStack(spacing: 16) {
+                        ForEach(Array(unlockedAchievements.enumerated()), id: \.element.id) { index, achievement in
+                            AchievementPopupView(
+                                achievement: achievement,
+                                isPresented: .constant(true)
+                            )
+                            .offset(y: -CGFloat(index * 8)) // Slight offset for stacked effect
+                            .zIndex(Double(unlockedAchievements.count - index)) // Higher achievements appear on top
+                        }
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                    .padding(.top, 44)
+                }
+                .transition(.opacity)
+                .onAppear {
+                    // Auto-dismiss all achievements after 4 seconds
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 4) {
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                            showingAchievementPopup = false
+                            unlockedAchievements = []
+                            showingSuccessAlert = true
+                        }
+                    }
+                }
             }
         }
         .overlay(debugOverlay)
@@ -356,10 +391,17 @@ struct NewSessionView: View {
         
         // Check for achievements
         let descriptor = FetchDescriptor<CrySession>()
-        if let sessions = try? modelContext.fetch(descriptor),
-           let achievement = Achievement.checkAchievements(sessions: sessions, modelContext: modelContext) {
-            unlockedAchievement = achievement
-            showingAchievementPopup = true
+        if let sessions = try? modelContext.fetch(descriptor) {
+            let achievements = Achievement.checkAchievements(sessions: sessions, modelContext: modelContext)
+            print("🎯 Received \(achievements.count) unlocked achievements")
+            if !achievements.isEmpty {
+                unlockedAchievements = achievements
+                currentAchievementIndex = 0
+                showingAchievementPopup = true
+                print("🎯 Showing first achievement popup")
+            } else {
+                showingSuccessAlert = true
+            }
         } else {
             showingSuccessAlert = true
         }
