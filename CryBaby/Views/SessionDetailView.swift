@@ -6,34 +6,40 @@ struct SessionDetailView: View {
     @Environment(\.dismiss) private var dismiss
     
     var body: some View {
-        NavigationView {
-            List {
-                Section("Basic Info") {
-                    LabeledContent("Name", value: session.name)
-                    LabeledContent("Reason", value: session.reason.rawValue)
-                    LabeledContent("Volume", value: session.volume.rawValue)
-                }
+        NavigationStack {
+            ZStack {
+                AppTheme.Colors.background.ignoresSafeArea()
                 
-                Section("Time Details") {
-                    LabeledContent("Date", value: session.date.formatted(date: .long, time: .shortened))
-                    LabeledContent("Duration", value: formatDuration(session.duration))
-                }
-                
-                Section("Satisfaction") {
-                    HStack {
-                        ForEach(0..<5) { index in
-                            Image(systemName: index < session.satisfaction ? "star.fill" : "star")
-                                .foregroundColor(.yellow)
+                List {
+                    Section("Basic Info") {
+                        LabeledContent("Name", value: session.name)
+                        LabeledContent("Reason", value: session.reason.rawValue)
+                        LabeledContent("Volume", value: session.volume.rawValue)
+                    }
+                    
+                    Section("Time Details") {
+                        LabeledContent("Date", value: session.date.formatted(date: .long, time: .shortened))
+                        LabeledContent("Duration", value: formatDuration(session.duration))
+                    }
+                    
+                    Section("Satisfaction") {
+                        HStack {
+                            ForEach(0..<5) { index in
+                                Image(systemName: index < session.satisfaction ? "star.fill" : "star")
+                                    .foregroundColor(Color(hex: "#FFD95F"))
+                            }
+                        }
+                    }
+                    
+                    if let notes = session.notes, !notes.isEmpty {
+                        Section("Notes") {
+                            Text(notes)
+                                .font(.body)
                         }
                     }
                 }
-                
-                if let notes = session.notes, !notes.isEmpty {
-                    Section("Notes") {
-                        Text(notes)
-                            .font(.body)
-                    }
-                }
+                .scrollContentBackground(.hidden)
+                .listStyle(.insetGrouped)
             }
             .navigationTitle("Session Details")
             .navigationBarTitleDisplayMode(.inline)
@@ -45,6 +51,9 @@ struct SessionDetailView: View {
                 }
             }
         }
+        .interactiveDismissDisabled(false)
+        .presentationDragIndicator(.visible)
+        .presentationDetents([.large])
     }
     
     private func formatDuration(_ duration: TimeInterval) -> String {

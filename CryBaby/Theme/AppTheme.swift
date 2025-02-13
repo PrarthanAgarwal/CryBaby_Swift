@@ -18,16 +18,10 @@ enum AppTheme {
     
     // MARK: - Typography
     struct Typography {
-        static let titleFont = Font.custom("Poppins-Bold", size: 24)
-        static let headlineFont = Font.custom("Poppins-SemiBold", size: 18)
-        static let bodyFont = Font.custom("Poppins-Regular", size: 16)
-        static let captionFont = Font.custom("Poppins-Regular", size: 14)
-        
-        // Fallback system fonts
-        static let systemTitleFont = Font.system(.title, design: .rounded)
-        static let systemHeadlineFont = Font.system(.headline, design: .rounded)
-        static let systemBodyFont = Font.system(.body, design: .rounded)
-        static let systemCaptionFont = Font.system(.caption, design: .rounded)
+        static let titleFont = Font.system(.title, design: .rounded)
+        static let headlineFont = Font.system(.headline, design: .rounded)
+        static let bodyFont = Font.system(.body, design: .rounded)
+        static let captionFont = Font.system(.caption, design: .rounded)
     }
     
     // MARK: - Layout

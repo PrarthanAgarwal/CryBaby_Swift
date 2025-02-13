@@ -13,9 +13,6 @@ struct CryBabyApp: App {
     let container: ModelContainer
     
     init() {
-        // Register custom fonts
-        Bundle.main.registerFonts()
-        
         do {
             let schema = Schema([CrySession.self, Achievement.self])
             let config = ModelConfiguration("CryBaby", schema: schema)

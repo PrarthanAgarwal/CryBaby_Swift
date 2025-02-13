@@ -7,7 +7,7 @@ struct NewSessionView: View {
     @State private var name = ""
     @State private var selectedReason = CryReason.justBecause
     @State private var selectedVolume = CryVolume.glass
-    @State private var date = Date()
+    @State private var date: Date
     @State private var durationMinutes: Double = 5
     @State private var satisfaction = 3
     @State private var notes = ""
@@ -16,6 +16,16 @@ struct NewSessionView: View {
     @State private var currentPage = 0
     @State private var showingAchievementPopup = false
     @State private var unlockedAchievement: Achievement?
+    
+    init() {
+        _date = State(initialValue: Date())
+    }
+    
+    private let dateRange: ClosedRange<Date> = {
+        let calendar = Calendar.current
+        let sevenDaysAgo = calendar.date(byAdding: .day, value: -7, to: Date()) ?? Date()
+        return sevenDaysAgo...Date()
+    }()
     
     private enum Field {
         case name
@@ -125,7 +135,8 @@ struct NewSessionView: View {
                 
                 Section(header: Text("Time Details").font(.headline).fontWeight(.bold)) {
                     VStack {
-                        DatePicker("Date", selection: $date)
+                        DatePicker("Date", selection: $date, in: dateRange)
+                            .tint(AppTheme.Colors.primary)
                         Divider()
                         Button {
                             showingDurationPicker.toggle()
@@ -220,7 +231,7 @@ struct NewSessionView: View {
             .listSectionSpacing(.compact)
             .listStyle(.insetGrouped)
             .navigationTitle("Describe Your Cry")
-            .navigationBarTitleDisplayMode(.inline)
+            .navigationBarTitleDisplayMode(.large)
             .alert("Session Saved!", isPresented: $showingSuccessAlert) {
                 Button("OK", role: .cancel) { }
             }
@@ -234,11 +245,6 @@ struct NewSessionView: View {
                 focusedField = nil
             }
             .toolbar {
-                ToolbarItem(placement: .principal) {
-                    Text("Describe Your Cry")
-                        .font(.headline)
-                        .fontWeight(.bold)
-                }
                 ToolbarItem(placement: .keyboard) {
                     Button("Done") {
                         focusedField = nil

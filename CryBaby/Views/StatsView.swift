@@ -223,7 +223,7 @@ struct ChartCard: View {
             if !data.isEmpty {
                 HStack(alignment: .center, spacing: 24) {
                     Chart {
-                        ForEach(Array(data.enumerated()), id: \.1.0) { index, item in
+                        ForEach(Array(data.enumerated()), id: \.offset) { index, item in
                             SectorMark(
                                 angle: .value("Count", item.1),
                                 innerRadius: .ratio(0.618),
@@ -243,7 +243,7 @@ struct ChartCard: View {
                     
                     // Legend
                     VStack(alignment: .leading, spacing: 8) {
-                        ForEach(Array(data.enumerated()), id: \.1.0) { index, item in
+                        ForEach(Array(data.enumerated()), id: \.offset) { index, item in
                             HStack(spacing: 12) {
                                 Circle()
                                     .fill(chartColors[index % chartColors.count])

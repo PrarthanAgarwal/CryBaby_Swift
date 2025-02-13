@@ -10,43 +10,14 @@
 		1929FC8B2D5CC80200EFC8A6 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = 1929FC8A2D5CC80200EFC8A6 /* Lottie */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXContainerItemProxy section */
-		19C28E1F2D589D3200B59CF0 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 19C28E062D589D3100B59CF0 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 19C28E0D2D589D3100B59CF0;
-			remoteInfo = CryBaby;
-		};
-		19C28E292D589D3200B59CF0 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 19C28E062D589D3100B59CF0 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 19C28E0D2D589D3100B59CF0;
-			remoteInfo = CryBaby;
-		};
-/* End PBXContainerItemProxy section */
-
 /* Begin PBXFileReference section */
 		19C28E0E2D589D3100B59CF0 /* CryBaby.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CryBaby.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		19C28E1E2D589D3200B59CF0 /* CryBabyTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CryBabyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		19C28E282D589D3200B59CF0 /* CryBabyUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CryBabyUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		19C28E102D589D3100B59CF0 /* CryBaby */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = CryBaby;
-			sourceTree = "<group>";
-		};
-		19C28E212D589D3200B59CF0 /* CryBabyTests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = CryBabyTests;
-			sourceTree = "<group>";
-		};
-		19C28E2B2D589D3200B59CF0 /* CryBabyUITests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = CryBabyUITests;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -60,20 +31,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		19C28E1B2D589D3200B59CF0 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		19C28E252D589D3200B59CF0 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -81,8 +38,6 @@
 			isa = PBXGroup;
 			children = (
 				19C28E102D589D3100B59CF0 /* CryBaby */,
-				19C28E212D589D3200B59CF0 /* CryBabyTests */,
-				19C28E2B2D589D3200B59CF0 /* CryBabyUITests */,
 				19C28E0F2D589D3100B59CF0 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -91,8 +46,6 @@
 			isa = PBXGroup;
 			children = (
 				19C28E0E2D589D3100B59CF0 /* CryBaby.app */,
-				19C28E1E2D589D3200B59CF0 /* CryBabyTests.xctest */,
-				19C28E282D589D3200B59CF0 /* CryBabyUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -123,52 +76,6 @@
 			productReference = 19C28E0E2D589D3100B59CF0 /* CryBaby.app */;
 			productType = "com.apple.product-type.application";
 		};
-		19C28E1D2D589D3200B59CF0 /* CryBabyTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 19C28E352D589D3200B59CF0 /* Build configuration list for PBXNativeTarget "CryBabyTests" */;
-			buildPhases = (
-				19C28E1A2D589D3200B59CF0 /* Sources */,
-				19C28E1B2D589D3200B59CF0 /* Frameworks */,
-				19C28E1C2D589D3200B59CF0 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				19C28E202D589D3200B59CF0 /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				19C28E212D589D3200B59CF0 /* CryBabyTests */,
-			);
-			name = CryBabyTests;
-			packageProductDependencies = (
-			);
-			productName = CryBabyTests;
-			productReference = 19C28E1E2D589D3200B59CF0 /* CryBabyTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
-		19C28E272D589D3200B59CF0 /* CryBabyUITests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 19C28E382D589D3200B59CF0 /* Build configuration list for PBXNativeTarget "CryBabyUITests" */;
-			buildPhases = (
-				19C28E242D589D3200B59CF0 /* Sources */,
-				19C28E252D589D3200B59CF0 /* Frameworks */,
-				19C28E262D589D3200B59CF0 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				19C28E2A2D589D3200B59CF0 /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				19C28E2B2D589D3200B59CF0 /* CryBabyUITests */,
-			);
-			name = CryBabyUITests;
-			packageProductDependencies = (
-			);
-			productName = CryBabyUITests;
-			productReference = 19C28E282D589D3200B59CF0 /* CryBabyUITests.xctest */;
-			productType = "com.apple.product-type.bundle.ui-testing";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -181,14 +88,6 @@
 				TargetAttributes = {
 					19C28E0D2D589D3100B59CF0 = {
 						CreatedOnToolsVersion = 16.2;
-					};
-					19C28E1D2D589D3200B59CF0 = {
-						CreatedOnToolsVersion = 16.2;
-						TestTargetID = 19C28E0D2D589D3100B59CF0;
-					};
-					19C28E272D589D3200B59CF0 = {
-						CreatedOnToolsVersion = 16.2;
-						TestTargetID = 19C28E0D2D589D3100B59CF0;
 					};
 				};
 			};
@@ -210,28 +109,12 @@
 			projectRoot = "";
 			targets = (
 				19C28E0D2D589D3100B59CF0 /* CryBaby */,
-				19C28E1D2D589D3200B59CF0 /* CryBabyTests */,
-				19C28E272D589D3200B59CF0 /* CryBabyUITests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		19C28E0C2D589D3100B59CF0 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		19C28E1C2D589D3200B59CF0 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		19C28E262D589D3200B59CF0 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -248,34 +131,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		19C28E1A2D589D3200B59CF0 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		19C28E242D589D3200B59CF0 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		19C28E202D589D3200B59CF0 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 19C28E0D2D589D3100B59CF0 /* CryBaby */;
-			targetProxy = 19C28E1F2D589D3200B59CF0 /* PBXContainerItemProxy */;
-		};
-		19C28E2A2D589D3200B59CF0 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 19C28E0D2D589D3100B59CF0 /* CryBaby */;
-			targetProxy = 19C28E292D589D3200B59CF0 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		19C28E302D589D3200B59CF0 /* Debug */ = {
@@ -463,74 +319,6 @@
 			};
 			name = Release;
 		};
-		19C28E362D589D3200B59CF0 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = prarthan.CryBabyTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CryBaby.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/CryBaby";
-			};
-			name = Debug;
-		};
-		19C28E372D589D3200B59CF0 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = prarthan.CryBabyTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CryBaby.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/CryBaby";
-			};
-			name = Release;
-		};
-		19C28E392D589D3200B59CF0 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = prarthan.CryBabyUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = CryBaby;
-			};
-			name = Debug;
-		};
-		19C28E3A2D589D3200B59CF0 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = prarthan.CryBabyUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = CryBaby;
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -548,24 +336,6 @@
 			buildConfigurations = (
 				19C28E332D589D3200B59CF0 /* Debug */,
 				19C28E342D589D3200B59CF0 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		19C28E352D589D3200B59CF0 /* Build configuration list for PBXNativeTarget "CryBabyTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				19C28E362D589D3200B59CF0 /* Debug */,
-				19C28E372D589D3200B59CF0 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		19C28E382D589D3200B59CF0 /* Build configuration list for PBXNativeTarget "CryBabyUITests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				19C28E392D589D3200B59CF0 /* Debug */,
-				19C28E3A2D589D3200B59CF0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

@@ -62,13 +62,11 @@ struct JournalView: View {
             .scrollContentBackground(.hidden)
             .background(AppTheme.Colors.background)
             .navigationTitle("Journal")
-            .sheet(isPresented: $showingDetail) {
-                if let session = selectedSession {
-                    SessionDetailView(session: session)
-                }
+            .sheet(item: $selectedSession) { session in
+                SessionDetailView(session: session)
             }
             .sheet(isPresented: $showingAllSessions) {
-                NavigationView {
+                NavigationStack {
                     List {
                         if sessions.isEmpty {
                             Text("No sessions recorded yet")
@@ -78,9 +76,10 @@ struct JournalView: View {
                         } else {
                             ForEach(sessions) { session in
                                 SessionRowView(session: session)
+                                    .contentShape(Rectangle())
                                     .onTapGesture {
                                         selectedSession = session
-                                        showingDetail = true
+                                        showingAllSessions = false
                                     }
                             }
                         }
@@ -183,6 +182,7 @@ struct CalendarView: View {
                 ForEach(daysInMonth(month: currentMonth, year: currentYear), id: \.self) { date in
                     if let date = date {
                         let isMarked = markedDates.contains { calendar.isDate($0, inSameDayAs: date) }
+                        let dayId = calendar.startOfDay(for: date).timeIntervalSince1970
                         
                         Circle()
                             .fill(isMarked ? AppTheme.Colors.primary.opacity(0.2) : Color.clear)
@@ -190,11 +190,13 @@ struct CalendarView: View {
                                 Text("\(calendar.component(.day, from: date))")
                                     .foregroundColor(isMarked ? AppTheme.Colors.primary : AppTheme.Colors.text)
                             )
+                            .id(dayId)
                             .onTapGesture {
                                 selectedDate = date
                             }
                     } else {
                         Color.clear
+                            .id(UUID())
                     }
                 }
             }
@@ -203,7 +205,8 @@ struct CalendarView: View {
     }
     
     private var weekdaySymbols: [String] {
-        Calendar.current.veryShortWeekdaySymbols
+        let symbols = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"]
+        return symbols
     }
     
     private func daysInMonth(month: Int, year: Int) -> [Date?] {
